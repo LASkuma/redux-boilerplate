@@ -1,4 +1,4 @@
-module.exports = function() {
+module.exports = function(data, initialState) {
   return `
     <!DOCTYPE html>
     <html lang="en">
@@ -9,7 +9,7 @@ module.exports = function() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body>
-        <h1>Hello World!</h1>
+        <div id="root">${data.html}</div>
       </body>
     </html>
   `
