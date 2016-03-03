@@ -5,6 +5,8 @@ import match from 'react-router/lib/match'
 import browserHistory from 'react-router/lib/browserHistory'
 import { Provider } from 'react-redux'
 
+import { trigger } from 'redial'
+
 // Your app's reducer and routes:
 import createRoutes from './routes/root'
 import { configureStore } from './store'
@@ -18,8 +20,35 @@ const { pathname, search, hash } = window.location
 const routes = createRoutes(store)
 
 // Render app with Redux and router context to container element:
-render((
-  <Provider store={store}>
-      <Router history={browserHistory} routes={routes} />
-  </Provider>
-), document.getElementById('root'))
+match({ routes, location }, () => {
+  render((
+    <Provider store={store}>
+        <Router history={browserHistory} routes={routes} />
+    </Provider>
+  ), document.getElementById('root'))
+})
+
+browserHistory.listen(location => {
+  match({ routes, location }, (error, redirectLocation, renderProps) => {
+    const { components } = renderProps
+
+    const locals = {
+      path: renderProps.location.pathname,
+      query: renderProps.location.query,
+      params: renderProps.params,
+      dispatch
+    }
+
+    // Don't fetch data for initial route, server has already done the work:
+    if (window.INITIAL_STATE) {
+      // Delete initial data so that subsequent data fetches can occur:
+      delete window.INITIAL_STATE;
+    } else {
+      // Fetch mandatory data dependencies for 2nd route change onwards:
+      trigger('fetch', components, locals);
+    }
+
+    // Fetch deferred, client-only data dependencies:
+    trigger('defer', components, locals);
+  })
+})

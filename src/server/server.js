@@ -17,6 +17,9 @@ import ReactDOM from 'react-dom/server';
 import { Provider } from 'react-redux'
 import { createMemoryHistory, RouterContext, match } from 'react-router'
 
+// Lifecycle
+import { trigger } from 'redial'
+
 import renderFullPage from './utils/renderFullPage'
 import { configureStore } from '../store'
 import createRoutes from '../routes/root'
@@ -71,14 +74,25 @@ server.get('*', (req, res) => {
 
     const { components } = renderProps
 
-    const initialState = store.getState()
-    const initialView = (
-      <Provider store={store}>
-        <RouterContext {...renderProps} />
-      </Provider>
-    )
-    const html = ReactDOM.renderToString(initialView)
-    res.status(200).send(renderFullPage({ html }, initialState))
+    const locals = {
+      path: renderProps.location.pathname,
+      query: renderProps.location.query,
+      params: renderProps.params,
+      dispatch
+    }
+
+    trigger('fetch', components, locals)
+      .then(() => {
+        const initialState = store.getState()
+        const initialView = (
+          <Provider store={store}>
+            <RouterContext {...renderProps} />
+          </Provider>
+        )
+        const html = ReactDOM.renderToString(initialView)
+        res.status(200).send(renderFullPage(html, initialState))
+      })
+      .catch(e => console.log(e))
   })
 })
 

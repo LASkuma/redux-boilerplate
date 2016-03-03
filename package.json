@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A redux boilerplate made by LASkuma",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "NODE_ENV=development node ./src/server"
   },
   "repository": {
     "type": "git",

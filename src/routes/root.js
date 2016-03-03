@@ -7,14 +7,13 @@ export default function createRoutes(store) {
   const root = {
     path: '/',
     component: App,
-    // getChildRoutes(location, cb) {
-    //   require.ensure([], (require) => {
-    //     cb(null, [
-    //       require('./About').default, // no need to modify store, no reducer
-    //       require('./Post').default(store), // add async reducer
-    //     ]);
-    //   });
-    // },
+    getChildRoutes(location, cb) {
+      require.ensure(['./counter'], (require) => {
+        cb(null, [
+          require('./counter').default(store) // add async reducer
+        ])
+      })
+    }
     //
     // indexRoute: {
     //   component: PostList,
