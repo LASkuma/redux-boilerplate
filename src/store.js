@@ -10,7 +10,15 @@ export function configureStore(initialState = {}) {
   ))
 
   store.asyncReducers = {}
-  
+
+  if (process.env.NODE_ENV == 'development') {
+    if (module.hot) {
+      module.hot.accept('./routes/root', () =>
+        store.replaceReducer(createReducer(store.asyncReducers))
+      )
+    }
+  }
+
   return store
 }
 

@@ -6,7 +6,7 @@ export default function counterReducer(state = { step: 1, count: 0 }, action) {
       return Object.assign({}, state, action.step)
 
     case TICK_COUNTER:
-      return Object.assign({}, state, { count: state.count + state.step })
+      return Object.assign({}, state, { count: state.count + 1 })
 
     default:
       return state

@@ -1,12 +1,12 @@
-import React, { ProptTypes } from 'react'
+import React, { Component, ProptTypes } from 'react'
 
-const App = ({ children }) => {
-  return (
-    <div>
-      <h1>Hello World!</h1>
-      {children}
-    </div>
-  )
+export default class App extends Component {
+  render() {
+    return (
+      <div>
+        <h1>Hello World!</h1>
+        {this.props.children}
+      </div>
+    )
+  }
 }
-
-export default App
